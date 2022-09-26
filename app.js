@@ -28,10 +28,17 @@ class Ul {
   }
 }
 
+class Strange {
+  static saveProducts(products){
+    localStorage.setItem("products",JSON.stringify(products))
+  }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   const products = new Products();
   const productsData = products.getproducts();
   //Produts.productsData()
   const ui = new Ul();
   ui.displayProducts(productsData);
+  Strange.saveProducts(productsData)
 });
