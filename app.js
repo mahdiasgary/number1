@@ -1,6 +1,10 @@
 import { productsData } from "./products.js";
 
+const backdrop = document.querySelector(".backdrop")
+const cartModal =document.querySelector(".cart")
+const cartBtn=document.querySelector(".cart-btn")
 const productsDOM = document.querySelector(".products-center");
+const cartBottens =document.querySelectorAll(".")
 console.log(productsDOM);
 class Products {
   getproducts() {
@@ -42,3 +46,17 @@ document.addEventListener("DOMContentLoaded", () => {
   ui.displayProducts(productsData);
   Strange.saveProducts(productsData)
 });
+
+
+
+backdrop.addEventListener("click",()=>{
+cartModal.style.opacity="0"
+cartModal.style.top ="-100%";
+backdrop.style.display="none"
+})
+ 
+cartBtn.addEventListener("click",()=>{
+  cartModal.style.opacity="1";
+  cartModal.style.top="10px";
+  backdrop.style.display ="block"
+})
