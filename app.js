@@ -7,8 +7,9 @@ const productsDOM = document.querySelector(".products-center");
 const carttotal = document.querySelector(".cart-total");
 const cartItems = document.querySelector(".cart-items");
 const cartContact = document.querySelector(".cartshow");
-const clearCartBtn =document.querySelector(".clear-cart")
+const clearCartBtn = document.querySelector(".clear-cart");
 let cart = [];
+let buttonsDOM = [];
 class Products {
   getproducts() {
     return productsData;
@@ -36,12 +37,11 @@ class Ul {
 
   getCartbtns() {
     const addtocartbtns = document.querySelectorAll(".add-to-cart");
-    console.log(addtocartbtns);
-
+    buttonsDOM = addtocartbtns;
     addtocartbtns.forEach((button) => {
       const id = button.dataset.id;
       const isinCart = cart.find(
-        (item) => item.id === parseInt(button.dadaset.id)
+        (item) => item.id == parseInt(button.dadaset.id)
       );
       if (isinCart) {
         button.innerText = "In Cart";
@@ -80,7 +80,7 @@ class Ul {
       <h3>${cart.price}$</h3>
     </div>
     <div class="cart-item-conteoller">
-      <i data-id=${cart.id}>up</i>
+      <i data-id=${cart.id} class="up-item">up</i>
       <p>${cart.quantity}</p>
       <i data-id=${cart.id} class="remove-item">down</i>
     </div>
@@ -95,17 +95,48 @@ class Ul {
   populatecart(cart) {
     cart.forEach((item) => this.setCartValue(item));
   }
-  caerlogic(){
-    clearCartBtn.addEventListener("click",()=>{
-      this.clearCart()
-    });
-    cartContact.addEventListener("click",(event)=>{
-      if(event.target.classList.contains("remove-item")){
-        const removeItem =event.target;
-        cartContact.removeChild(removeItem.parentElement)
+  caerlogic() {
+    clearCartBtn.addEventListener("click", () => {
+      cart.forEach((item) => {
+        this.removeItem(item.id);
+      });
+      while (cartContact.children.length) {
+        cartContact.removeChild(cartContact.children[0]);
       }
-    })
+      closemodalFunction();
+    });
+    cartContact.addEventListener("click", (event) => {
+      console.log(44);
+      if (event.target.classList.contains("remove-item")) {
+        const removeItem = event.target;
+        cartContact.removeChild(removeItem.parentElement);
+        const id = removeItem.dataset.id;
+        this.removeChild(id);
+      } else if (event.target.classList.contains("up-item")) {
+        const addquantity = event.target;
+        const id = addquantity.dataset.id;
+        const addedItem = cart.find((c) => c.id == id);
+        addedItem.quantity++;
+        Strange.saveCart(cart);
+        this.setCartValue(cart);
+        console.log(addquantity.nextElementSibling.innerText);
+        addquantity.nextElementSibling.innerText = addedItem.quantity;
+      }
+    });
+  }
+  removeItem(id) {
+    cart = cart.filter((cartItems) => cart.id != id);
 
+    const button = this.getsinglebutton(id);
+    this.setCartValue(cart);
+    //     Strange.saveCart(cart);
+    // button.disabled="false";
+    // button.innerHTML=`add to cart`
+  }
+  getsinglebutton(id) {
+    return buttonsDOM.find(
+      (button) => parseInt(button.dataset.id) == parseInt(id)
+    );
   }
 }
 
@@ -138,13 +169,16 @@ document.addEventListener("DOMContentLoaded", () => {
   Strange.saveProducts(productsData);
   ui.getCartbtns();
   ui.setupApp();
+  ui.caerlogic();
 });
 
-backdrop.addEventListener("click", () => {
+backdrop.addEventListener("click", closemodalFunction);
+
+function closemodalFunction() {
   cartModal.style.opacity = "0";
   cartModal.style.top = "-100%";
   backdrop.style.display = "none";
-});
+}
 
 cartBtn.addEventListener("click", () => {
   cartModal.style.opacity = "1";
